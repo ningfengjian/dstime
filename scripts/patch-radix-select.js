@@ -1,21 +1,17 @@
 const fs = require("fs");
 const path = require("path");
 
-const targetFiles = ["index.mjs", "index.js"].map((filename) =>
-  path.join(
-    __dirname,
-    "..",
-    "node_modules",
-    "@radix-ui",
-    "react-select",
-    "dist",
-    filename
-  )
+const selectPath = path.join(
+  __dirname,
+  "..",
+  "node_modules",
+  "@radix-ui",
+  "react-select",
+  "dist",
+  "index.mjs"
 );
 
-const existingTargets = targetFiles.filter((filePath) => fs.existsSync(filePath));
-
-if (!existingTargets.length) {
+if (!fs.existsSync(selectPath)) {
   console.warn("@radix-ui/react-select not found; skipping patch.");
   process.exit(0);
 }
@@ -23,29 +19,18 @@ if (!existingTargets.length) {
 const originalSnippet = "setTimeout(() => nextItem.ref.current.focus());";
 const patchedSnippet = "setTimeout(() => nextItem.ref.current?.focus());";
 
-let patchedCount = 0;
+const fileContents = fs.readFileSync(selectPath, "utf8");
 
-for (const filePath of existingTargets) {
-  const fileContents = fs.readFileSync(filePath, "utf8");
-
-  if (fileContents.includes(patchedSnippet)) {
-    console.log(`${path.basename(filePath)} already patched.`);
-    continue;
-  }
-
-  if (!fileContents.includes(originalSnippet)) {
-    console.warn(
-      `${path.basename(filePath)} did not contain expected snippet; skipping.`
-    );
-    continue;
-  }
-
-  const updatedContents = fileContents.replace(originalSnippet, patchedSnippet);
-  fs.writeFileSync(filePath, updatedContents);
-  patchedCount += 1;
-  console.log(`Patched ${path.basename(filePath)} for focus safety.`);
+if (fileContents.includes(patchedSnippet)) {
+  console.log("@radix-ui/react-select already patched.");
+  process.exit(0);
 }
 
-if (patchedCount === 0) {
-  console.warn("No @radix-ui/react-select files were patched.");
+if (!fileContents.includes(originalSnippet)) {
+  console.warn("Expected snippet not found; no changes applied.");
+  process.exit(0);
 }
+
+const updatedContents = fileContents.replace(originalSnippet, patchedSnippet);
+fs.writeFileSync(selectPath, updatedContents);
+console.log("Applied @radix-ui/react-select focus safety patch.");

@@ -2,17 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import {
-  BookOpen,
-  CalendarIcon,
-  ChevronDown,
-  CircleHelp,
-  Clock3,
-  Copy,
-  Globe2,
-  Hash,
-  RefreshCcw,
-} from "lucide-react";
+import { BookOpen, CalendarIcon, CircleHelp, Clock3, Copy, Globe2, Hash, RefreshCcw } from "lucide-react";
 import { DateTime } from "luxon";
 
 import { Button } from "@/components/ui/button";
@@ -71,34 +61,17 @@ const howToUseSteps: { title: string; description: string; icon: LucideIcon }[] 
 
 const faqItems = [
   {
-    question: "How do I create a timestamp in Discord?",
+    question: "What do the timestamp codes mean?",
     answer:
-      "Generate a UNIX timestamp from the date, time, and timezone you pick above. Copy the syntax like <t:1704067200:F> and paste it in chat.",
+      "Codes like t, T, d, f, and R tell Discord how to format the time. Pick the style you want, copy the syntax, and paste it into chat.",
   },
   {
-    question: "How do I add a timestamp to a Discord message?",
-    answer:
-      "Paste the copied <t:UNIX:FORMAT> code directly into your message. Discord renders it automatically when you send.",
+    question: "Will times adjust for every viewer?",
+    answer: "Yes. Discord shows timestamps in each viewer's local time and timezone automatically.",
   },
   {
-    question: "How do I show local time for everyone?",
-    answer:
-      "Choose the timezone that matches your event. Discord converts the timestamp to each viewer's local time after you send it.",
-  },
-  {
-    question: "Which format should I pick?",
-    answer:
-      "t, T, d, D, f, and F are absolute formats; R shows relative text like “in 5 minutes.” The table above previews each option.",
-  },
-  {
-    question: "How do I display a countdown like 'in 10 minutes'?",
-    answer:
-      "Use the Relative format (code R). Copy the generated <t:UNIX:R> snippet to show human-friendly countdown text.",
-  },
-  {
-    question: "Can I convert times without changing my system clock?",
-    answer:
-      "Yes. Set the exact timezone in the dropdown, preview the result, and copy the code—no device settings required.",
+    question: "How do I start over?",
+    answer: "Use the Reset to now button to quickly jump back to the current date and time.",
   },
 ];
 
@@ -379,45 +352,12 @@ export default function Home() {
               <h2 className="text-lg font-semibold text-gray-900">FAQ</h2>
             </div>
             <div className="space-y-4">
-              {faqItems.map((item) => {
-                const isOpen = openQuestion === item.question;
-                return (
-                  <div
-                    key={item.question}
-                    className={cn(
-                      "overflow-hidden rounded-xl border transition data-[state=open]:bg-white",
-                      "border-blue-100 bg-white/80 dark:border-gray-700", // dark mode-friendly classes if theme is extended
-                      isOpen && "bg-white"
-                    )}
-                    data-state={isOpen ? "open" : "closed"}
-                  >
-                    <h3>
-                      <button
-                        type="button"
-                        className={cn(
-                          "flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-gray-900",
-                          "transition [&[data-state=open]>svg]:rotate-180"
-                        )}
-                        aria-expanded={isOpen}
-                        onClick={() => setOpenQuestion(isOpen ? "" : item.question)}
-                        data-state={isOpen ? "open" : "closed"}
-                      >
-                        <span className="pr-3 text-base">{item.question}</span>
-                        <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-                      </button>
-                    </h3>
-                    <div
-                      className={cn(
-                        "overflow-hidden text-sm text-muted-foreground transition-all",
-                        isOpen ? "max-h-40 px-4 pb-4" : "max-h-0 px-4"
-                      )}
-                      aria-hidden={!isOpen}
-                    >
-                      <p>{item.answer}</p>
-                    </div>
-                  </div>
-                );
-              })}
+              {faqItems.map((item) => (
+                <div key={item.question} className="rounded-lg border border-muted bg-white/70 p-4">
+                  <p className="text-sm font-semibold text-gray-900">{item.question}</p>
+                  <p className="text-sm text-muted-foreground">{item.answer}</p>
+                </div>
+              ))}
             </div>
           </section>
         </div>
