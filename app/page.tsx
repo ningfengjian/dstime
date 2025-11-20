@@ -1,7 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarIcon, Clock3, Copy, Globe2, Hash, RefreshCcw } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import {
+  BookOpen,
+  CalendarIcon,
+  ChevronDown,
+  CircleHelp,
+  Clock3,
+  Copy,
+  Globe2,
+  Hash,
+  RefreshCcw,
+} from "lucide-react";
 import { DateTime } from "luxon";
 
 import { Button } from "@/components/ui/button";
@@ -40,6 +51,57 @@ const formatters = [
   { label: "Long Date & Time", code: "F", format: (dt: DateTime) => dt.toFormat("EEEE, LLLL d, yyyy HH:mm") },
 ];
 
+const howToUseSteps: { title: string; description: string; icon: LucideIcon }[] = [
+  {
+    title: "Pick a date and time",
+    description: "Use the calendar and clock inputs to match your event start.",
+    icon: CalendarIcon,
+  },
+  {
+    title: "Select a timezone",
+    description: "Search for any IANA timezone so Discord renders correctly for everyone.",
+    icon: Globe2,
+  },
+  {
+    title: "Copy the code",
+    description: "Copy the chat-friendly timestamp or UNIX seconds and paste it into Discord.",
+    icon: Copy,
+  },
+];
+
+const faqItems = [
+  {
+    question: "How do I create a timestamp in Discord?",
+    answer:
+      "Generate a UNIX timestamp from the date, time, and timezone you pick above. Copy the syntax like <t:1704067200:F> and paste it in chat.",
+  },
+  {
+    question: "How do I add a timestamp to a Discord message?",
+    answer:
+      "Paste the copied <t:UNIX:FORMAT> code directly into your message. Discord renders it automatically when you send.",
+  },
+  {
+    question: "How do I show local time for everyone?",
+    answer:
+      "Choose the timezone that matches your event. Discord converts the timestamp to each viewer's local time after you send it.",
+  },
+  {
+    question: "Which format should I pick?",
+    answer:
+      "t, T, d, D, f, and F are absolute formats; R shows relative text like “in 5 minutes.” The table above previews each option.",
+  },
+  {
+    question: "How do I display a countdown like 'in 10 minutes'?",
+    answer:
+      "Use the Relative format (code R). Copy the generated <t:UNIX:R> snippet to show human-friendly countdown text.",
+  },
+  {
+    question: "Can I convert times without changing my system clock?",
+    answer:
+      "Yes. Set the exact timezone in the dropdown, preview the result, and copy the code—no device settings required.",
+  },
+];
+
 function getInitialTime() {
   const now = new Date();
   const hours = String(now.getHours()).padStart(2, "0");
@@ -57,6 +119,7 @@ export default function Home() {
   const [relativeBase, setRelativeBase] = useState<DateTime | null>(null);
   const [timezoneQuery, setTimezoneQuery] = useState<string>("");
   const timezoneSearchRef = useRef<HTMLInputElement>(null);
+  const [openQuestion, setOpenQuestion] = useState<string>(faqItems[0]?.question ?? "");
 
   const targetDateTime = useMemo(() => {
     if (!date) return null;
@@ -288,6 +351,76 @@ export default function Home() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <section className="rounded-xl border bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-3">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold text-gray-900">How to Use</h2>
+            </div>
+            <div className="space-y-4">
+              {howToUseSteps.map((step) => (
+                <div key={step.title} className="flex gap-3 rounded-lg bg-muted/60 p-3">
+                  <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <step.icon className="h-4 w-4" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-gray-900">{step.title}</p>
+                    <p className="text-sm text-muted-foreground">{step.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-xl border bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-3">
+              <CircleHelp className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold text-gray-900">FAQ</h2>
+            </div>
+            <div className="space-y-4">
+              {faqItems.map((item) => {
+                const isOpen = openQuestion === item.question;
+                return (
+                  <div
+                    key={item.question}
+                    className={cn(
+                      "overflow-hidden rounded-xl border transition data-[state=open]:bg-white",
+                      "border-blue-100 bg-white/80 dark:border-gray-700", // dark mode-friendly classes if theme is extended
+                      isOpen && "bg-white"
+                    )}
+                    data-state={isOpen ? "open" : "closed"}
+                  >
+                    <h3>
+                      <button
+                        type="button"
+                        className={cn(
+                          "flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-gray-900",
+                          "transition [&[data-state=open]>svg]:rotate-180"
+                        )}
+                        aria-expanded={isOpen}
+                        onClick={() => setOpenQuestion(isOpen ? "" : item.question)}
+                        data-state={isOpen ? "open" : "closed"}
+                      >
+                        <span className="pr-3 text-base">{item.question}</span>
+                        <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+                      </button>
+                    </h3>
+                    <div
+                      className={cn(
+                        "overflow-hidden text-sm text-muted-foreground transition-all",
+                        isOpen ? "max-h-40 px-4 pb-4" : "max-h-0 px-4"
+                      )}
+                      aria-hidden={!isOpen}
+                    >
+                      <p>{item.answer}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </div>
       </div>
     </main>
   );
