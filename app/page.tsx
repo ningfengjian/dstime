@@ -193,7 +193,7 @@ export default function Home() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="max-h-[280px] overflow-y-auto">
-                    <div className="sticky top-0 z-10 bg-white p-2 shadow-sm">
+                    <div className="p-2">
                       <Input
                         placeholder="Search timezones"
                         value={timezoneQuery}
