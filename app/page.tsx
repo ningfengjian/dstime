@@ -192,8 +192,8 @@ export default function Home() {
                     <Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[280px] overflow-y-auto">
-                    <div className="p-2">
+                  <SelectContent className="max-h-[280px] overflow-y-auto p-0">
+                    <div className="sticky top-0 z-10 border-b bg-white p-2">
                       <Input
                         placeholder="Search timezones"
                         value={timezoneQuery}
@@ -202,17 +202,19 @@ export default function Home() {
                       />
                     </div>
 
-                    {filteredTimezones.length ? (
-                      filteredTimezones.map((zone) => (
-                        <SelectItem key={zone} value={zone}>
-                          {zone}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <div className="px-3 py-2 text-sm text-muted-foreground">
-                        No timezones found
-                      </div>
-                    )}
+                    <div className="py-1">
+                      {filteredTimezones.length ? (
+                        filteredTimezones.map((zone) => (
+                          <SelectItem key={zone} value={zone}>
+                            {zone}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="px-3 py-2 text-sm text-muted-foreground">
+                          No timezones found
+                        </div>
+                      )}
+                    </div>
                   </SelectContent>
                 </Select>
               </div>
