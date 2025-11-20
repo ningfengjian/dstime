@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarIcon, Clock3, Copy, Globe2, Hash, RefreshCcw } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { BookOpen, CalendarIcon, CircleHelp, Clock3, Copy, Globe2, Hash, RefreshCcw } from "lucide-react";
 import { DateTime } from "luxon";
 
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,40 @@ const formatters = [
   { label: "Long Date", code: "D", format: (dt: DateTime) => dt.toFormat("EEEE, LLLL d, yyyy") },
   { label: "Short Date & Time", code: "f", format: (dt: DateTime) => dt.toFormat("LLLL d, yyyy HH:mm") },
   { label: "Long Date & Time", code: "F", format: (dt: DateTime) => dt.toFormat("EEEE, LLLL d, yyyy HH:mm") },
+];
+
+const howToUseSteps: { title: string; description: string; icon: LucideIcon }[] = [
+  {
+    title: "Pick a date and time",
+    description: "Use the calendar and clock inputs to match your event start.",
+    icon: CalendarIcon,
+  },
+  {
+    title: "Select a timezone",
+    description: "Search for any IANA timezone so Discord renders correctly for everyone.",
+    icon: Globe2,
+  },
+  {
+    title: "Copy the code",
+    description: "Copy the chat-friendly timestamp or UNIX seconds and paste it into Discord.",
+    icon: Copy,
+  },
+];
+
+const faqItems = [
+  {
+    question: "What do the timestamp codes mean?",
+    answer:
+      "Codes like t, T, d, f, and R tell Discord how to format the time. Pick the style you want, copy the syntax, and paste it into chat.",
+  },
+  {
+    question: "Will times adjust for every viewer?",
+    answer: "Yes. Discord shows timestamps in each viewer's local time and timezone automatically.",
+  },
+  {
+    question: "How do I start over?",
+    answer: "Use the Reset to now button to quickly jump back to the current date and time.",
+  },
 ];
 
 function getInitialTime() {
@@ -288,6 +323,43 @@ export default function Home() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <section className="rounded-xl border bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-3">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold text-gray-900">How to Use</h2>
+            </div>
+            <div className="space-y-4">
+              {howToUseSteps.map((step) => (
+                <div key={step.title} className="flex gap-3 rounded-lg bg-muted/60 p-3">
+                  <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <step.icon className="h-4 w-4" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-gray-900">{step.title}</p>
+                    <p className="text-sm text-muted-foreground">{step.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-xl border bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-3">
+              <CircleHelp className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold text-gray-900">FAQ</h2>
+            </div>
+            <div className="space-y-4">
+              {faqItems.map((item) => (
+                <div key={item.question} className="rounded-lg border border-muted bg-white/70 p-4">
+                  <p className="text-sm font-semibold text-gray-900">{item.question}</p>
+                  <p className="text-sm text-muted-foreground">{item.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </main>
   );
