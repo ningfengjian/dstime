@@ -55,6 +55,7 @@ export default function Home() {
   );
   const [copiedValue, setCopiedValue] = useState<string>("");
   const [relativeBase, setRelativeBase] = useState<DateTime | null>(null);
+  const [timezoneQuery, setTimezoneQuery] = useState<string>("");
 
   const targetDateTime = useMemo(() => {
     if (!date) return null;
@@ -76,6 +77,14 @@ export default function Home() {
   useEffect(() => {
     setRelativeBase(DateTime.now());
   }, [targetDateTime]);
+
+  const filteredTimezones = useMemo(() => {
+    const query = timezoneQuery.trim().toLowerCase();
+
+    if (!query) return timezoneList;
+
+    return timezoneList.filter((zone) => zone.toLowerCase().includes(query));
+  }, [timezoneQuery]);
 
   const unixSeconds = targetDateTime?.toSeconds() ?? 0;
   const timestamp = Math.floor(unixSeconds);
@@ -172,17 +181,38 @@ export default function Home() {
 
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs uppercase tracking-wide text-muted-foreground">Timezone</Label>
-                <Select value={timeZone} onValueChange={setTimeZone}>
+                <Select
+                  value={timeZone}
+                  onValueChange={setTimeZone}
+                  onOpenChange={(open) => {
+                    if (!open) setTimezoneQuery("");
+                  }}
+                >
                   <SelectTrigger className="w-[220px] bg-white">
                     <Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[240px] overflow-y-auto">
-                    {timezoneList.map((zone) => (
-                      <SelectItem key={zone} value={zone}>
-                        {zone}
-                      </SelectItem>
-                    ))}
+                  <SelectContent className="max-h-[280px] overflow-y-auto">
+                    <div className="sticky top-0 z-10 bg-white p-2 shadow-sm">
+                      <Input
+                        placeholder="Search timezones"
+                        value={timezoneQuery}
+                        onChange={(event) => setTimezoneQuery(event.target.value)}
+                        className="h-9"
+                      />
+                    </div>
+
+                    {filteredTimezones.length ? (
+                      filteredTimezones.map((zone) => (
+                        <SelectItem key={zone} value={zone}>
+                          {zone}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-sm text-muted-foreground">
+                        No timezones found
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
