@@ -92,6 +92,7 @@ export default function Home() {
   const [relativeBase, setRelativeBase] = useState<DateTime | null>(null);
   const [timezoneQuery, setTimezoneQuery] = useState<string>("");
   const timezoneSearchRef = useRef<HTMLInputElement>(null);
+  const [openQuestion, setOpenQuestion] = useState<string>(faqItems[0]?.question ?? "");
 
   const targetDateTime = useMemo(() => {
     if (!date) return null;
