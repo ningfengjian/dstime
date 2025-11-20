@@ -56,6 +56,7 @@ export default function Home() {
   const [copiedValue, setCopiedValue] = useState<string>("");
   const [relativeBase, setRelativeBase] = useState<DateTime | null>(null);
   const [timezoneQuery, setTimezoneQuery] = useState<string>("");
+  const timezoneSearchRef = useRef<HTMLInputElement>(null);
 
   const targetDateTime = useMemo(() => {
     if (!date) return null;
@@ -160,7 +161,6 @@ export default function Home() {
                       mode="single"
                       selected={date}
                       onSelect={(selected) => setDate(selected)}
-                      initialFocus
                     />
                   </PopoverContent>
                 </Popover>
@@ -192,12 +192,19 @@ export default function Home() {
                     <Globe2 className="mr-2 h-4 w-4 text-muted-foreground" />
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="max-h-[280px] overflow-y-auto p-0">
+                  <SelectContent
+                    className="max-h-[280px] overflow-y-auto p-0"
+                    onOpenAutoFocus={(event) => {
+                      event.preventDefault();
+                      timezoneSearchRef.current?.focus();
+                    }}
+                  >
                     <div className="sticky top-0 z-10 border-b bg-white p-2">
                       <Input
                         placeholder="Search timezones"
                         value={timezoneQuery}
                         onChange={(event) => setTimezoneQuery(event.target.value)}
+                        ref={timezoneSearchRef}
                         className="h-9"
                       />
                     </div>

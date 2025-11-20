@@ -61,7 +61,7 @@ SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayNam
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
+>(({ className, children, position = "popper", onOpenAutoFocus, onCloseAutoFocus, ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
@@ -70,6 +70,13 @@ const SelectContent = React.forwardRef<
         position === "popper" && "translate-y-1",
         className
       )}
+      onOpenAutoFocus={(event) => {
+        onOpenAutoFocus?.(event);
+      }}
+      onCloseAutoFocus={(event) => {
+        event.preventDefault();
+        onCloseAutoFocus?.(event);
+      }}
       position={position}
       {...props}
     >
