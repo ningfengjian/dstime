@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CalendarIcon, Clock3, Copy, Globe2, Hash, RefreshCcw } from "lucide-react";
 import { DateTime } from "luxon";
 
@@ -54,6 +54,7 @@ export default function Home() {
     Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
   );
   const [copiedValue, setCopiedValue] = useState<string>("");
+  const [relativeBase, setRelativeBase] = useState<DateTime | null>(null);
 
   const targetDateTime = useMemo(() => {
     if (!date) return null;
@@ -72,9 +73,17 @@ export default function Home() {
     );
   }, [date, time, timeZone]);
 
+  useEffect(() => {
+    setRelativeBase(DateTime.now());
+  }, [targetDateTime]);
+
   const unixSeconds = targetDateTime?.toSeconds() ?? 0;
   const timestamp = Math.floor(unixSeconds);
-  const relativeTime = targetDateTime?.toRelative({ base: DateTime.now() }) ?? "-";
+  const relativeTime = useMemo(() => {
+    if (!targetDateTime || !relativeBase) return "-";
+
+    return targetDateTime.toRelative({ base: relativeBase }) ?? "-";
+  }, [relativeBase, targetDateTime]);
 
   const items = useMemo(() => {
     if (!targetDateTime) return [];
