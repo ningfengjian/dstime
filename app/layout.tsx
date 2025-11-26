@@ -34,6 +34,9 @@ export default function RootLayout({
                 <Link href="/blog" className="transition hover:text-primary">
                   Blog
                 </Link>
+                <Link href="/blog/admin" className="transition hover:text-primary">
+                  Admin
+                </Link>
               </nav>
             </div>
           </header>
