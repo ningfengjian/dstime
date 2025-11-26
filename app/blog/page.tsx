@@ -1,5 +1,3 @@
-import { headers } from "next/headers";
-
 interface BlogPost {
   slug: string;
   title: string;
@@ -9,24 +7,7 @@ interface BlogPost {
 }
 
 async function fetchPosts() {
-  const headerList = headers();
-  const host = headerList.get("host") ?? "localhost:3000";
-  const protocol = headerList.get("x-forwarded-proto") ?? "http";
-  const envBaseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim();
-
-  let baseUrl = `${protocol}://${host}`;
-
-  if (envBaseUrl) {
-    try {
-      baseUrl = new URL(envBaseUrl, `${protocol}://${host}`).origin;
-    } catch {
-      baseUrl = `${protocol}://${host}`;
-    }
-  }
-
-  const apiUrl = new URL("/api/blog", baseUrl);
-
-  const response = await fetch(apiUrl, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/blog`, {
     cache: "no-store",
   });
 
