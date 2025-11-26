@@ -1,5 +1,3 @@
-import { headers } from "next/headers";
-
 interface BlogPost {
   slug: string;
   title: string;
@@ -9,31 +7,7 @@ interface BlogPost {
 }
 
 async function fetchPosts() {
-  const headerList = headers();
-  const rawHost = headerList.get("host")?.trim();
-  const rawProtocol = headerList.get("x-forwarded-proto")?.trim();
-  const envBaseUrl = process.env.NEXT_PUBLIC_BASE_URL?.trim();
-
-  const parsedHost = rawHost && rawHost.length > 0 ? rawHost.split(",")[0].trim() : "localhost:3000";
-  const normalizedHost = parsedHost.replace(/^https?:\/\//i, "");
-  const host = normalizedHost.length > 0 ? normalizedHost : "localhost:3000";
-  const parsedProtocol = rawProtocol && rawProtocol.length > 0 ? rawProtocol.split(",")[0].trim() : "http";
-  const protocol = /^https?$/i.test(parsedProtocol) ? parsedProtocol : "http";
-
-  const defaultBaseUrl = `${protocol}://${host}`;
-  let baseUrl = defaultBaseUrl;
-
-  if (envBaseUrl) {
-    try {
-      baseUrl = new URL(envBaseUrl, defaultBaseUrl).origin;
-    } catch {
-      baseUrl = defaultBaseUrl;
-    }
-  }
-
-  const apiUrl = new URL("/api/blog", baseUrl);
-
-  const response = await fetch(apiUrl, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/blog`, {
     cache: "no-store",
   });
 
