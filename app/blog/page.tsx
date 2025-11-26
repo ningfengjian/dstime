@@ -1,5 +1,3 @@
-import { headers } from "next/headers";
-
 interface BlogPost {
   slug: string;
   title: string;
@@ -8,45 +6,8 @@ interface BlogPost {
   updatedAt: string;
 }
 
-function parseOrigin(candidate?: string | null, fallbackProtocol = "http") {
-  if (!candidate) return null;
-
-  const value = candidate.trim();
-  if (!value) return null;
-
-  try {
-    const hasProtocol = /^https?:\/\//i.test(value);
-    const url = new URL(hasProtocol ? value : `${fallbackProtocol}://${value}`);
-    return url.origin;
-  } catch {
-    return null;
-  }
-}
-
-function resolveOrigin() {
-  const envOrigin =
-    parseOrigin(process.env.NEXT_PUBLIC_BASE_URL) || parseOrigin(process.env.VERCEL_URL, "https");
-  if (envOrigin) return envOrigin;
-
-  const headerList = headers();
-  const protocolHeader = headerList.get("x-forwarded-proto");
-  const hostHeader = headerList.get("x-forwarded-host") ?? headerList.get("host");
-
-  const protocol = protocolHeader?.split(",")[0].trim() || "http";
-  const host = hostHeader?.split(",")[0].trim();
-
-  if (host) {
-    const headerOrigin = parseOrigin(`${protocol}://${host}`, protocol);
-    if (headerOrigin) return headerOrigin;
-  }
-
-  return "http://127.0.0.1:3000";
-}
-
 async function fetchPosts() {
-  const apiUrl = new URL("/api/blog", resolveOrigin());
-
-  const response = await fetch(apiUrl.toString(), {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/blog`, {
     cache: "no-store",
   });
 
