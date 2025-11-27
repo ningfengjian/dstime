@@ -1,5 +1,3 @@
-import { headers } from "next/headers";
-
 interface BlogPost {
   slug: string;
   title: string;
@@ -8,33 +6,8 @@ interface BlogPost {
   updatedAt: string;
 }
 
-function resolveOrigin() {
-  const envBase = process.env.NEXT_PUBLIC_BASE_URL?.trim();
-  if (envBase) {
-    try {
-      return new URL(envBase).origin;
-    } catch {
-      // fall through
-    }
-  }
-
-  const headerHost = headers().get("host")?.split(",")[0].trim();
-  if (headerHost) {
-    try {
-      return new URL(`http://${headerHost}`).origin;
-    } catch {
-      // fall through
-    }
-  }
-
-  return "http://127.0.0.1:3000";
-}
-
 async function fetchPosts() {
-  const origin = resolveOrigin();
-  const apiUrl = `${origin.replace(/\/$/, "")}/api/blog`;
-
-  const response = await fetch(apiUrl.toString(), {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/api/blog`, {
     cache: "no-store",
   });
 

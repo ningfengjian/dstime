@@ -20,9 +20,6 @@ const defaultFormState = {
 };
 
 export default function BlogAdminPage() {
-  const [authorized, setAuthorized] = useState(false);
-  const [password, setPassword] = useState("");
-  const [authError, setAuthError] = useState<string | null>(null);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [form, setForm] = useState(defaultFormState);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
@@ -32,20 +29,11 @@ export default function BlogAdminPage() {
   const activeModeLabel = useMemo(() => (activeSlug ? "更新文章" : "创建文章"), [activeSlug]);
 
   useEffect(() => {
-    const storedAuth = typeof window !== "undefined" ? localStorage.getItem("blog_admin_authed") : null;
-    if (storedAuth === "1") {
-      setAuthorized(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!authorized) return;
-
     fetch("/api/blog?includeDrafts=1")
       .then((res) => res.json())
       .then((data) => setPosts(data.posts as BlogPost[]))
       .catch(() => setMessage("无法加载文章列表"));
-  }, [authorized]);
+  }, []);
 
   const resetForm = () => {
     setForm(defaultFormState);
@@ -96,51 +84,6 @@ export default function BlogAdminPage() {
       status: post.status,
     });
   };
-
-  const handleAuthorize = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (password === "zzz2188185") {
-      localStorage.setItem("blog_admin_authed", "1");
-      setAuthorized(true);
-      setAuthError(null);
-    } else {
-      setAuthError("密码不正确，请重试");
-    }
-  };
-
-  if (!authorized) {
-    return (
-      <main className="flex min-h-screen items-center justify-center px-4 py-10">
-        <form
-          onSubmit={handleAuthorize}
-          className="w-full max-w-md space-y-4 rounded-xl border bg-white p-6 shadow-sm"
-        >
-          <div className="space-y-1">
-            <h1 className="text-2xl font-semibold text-gray-900">管理员登录</h1>
-            <p className="text-sm text-muted-foreground">请输入密码以访问博客后台。</p>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">访问密码</label>
-            <input
-              type="password"
-              className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary focus:outline-none"
-              placeholder="输入密码"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </div>
-          {authError && <p className="text-sm text-red-600">{authError}</p>}
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
-          >
-            进入后台
-          </button>
-        </form>
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen px-4 py-10">
