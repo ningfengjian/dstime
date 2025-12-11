@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, CalendarIcon, CircleHelp, Clock3, Copy, Globe2, Hash, RefreshCcw } from "lucide-react";
+import { BookOpen, CalendarIcon, CircleHelp, Clock3, Copy, Globe2, Hash, RefreshCcw, ShieldCheck } from "lucide-react";
 import { DateTime } from "luxon";
 
 import { Button } from "@/components/ui/button";
@@ -72,6 +73,23 @@ const faqItems = [
   {
     question: "How do I start over?",
     answer: "Use the Reset to now button to quickly jump back to the current date and time.",
+  },
+];
+
+const quickLinks: { title: string; description: string; href: string; icon: LucideIcon; cta: string }[] = [
+  {
+    title: "Blog",
+    description: "Read quick tips for sharing schedules and countdowns with your community.",
+    href: "/blog",
+    icon: BookOpen,
+    cta: "Browse posts",
+  },
+  {
+    title: "Admin",
+    description: "Create or update blog posts directly without leaving the generator.",
+    href: "/blog/admin",
+    icon: ShieldCheck,
+    cta: "Open admin",
   },
 ];
 
@@ -361,6 +379,35 @@ export default function Home() {
             </div>
           </section>
         </div>
+
+        <section className="mt-10 rounded-xl border bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Hash className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold text-gray-900">Explore more</h2>
+            </div>
+            <span className="text-sm text-muted-foreground">Admin and blog tools are one click away.</span>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {quickLinks.map((link) => (
+              <Link
+                key={link.title}
+                href={link.href}
+                className="flex items-start gap-3 rounded-lg border p-4 transition hover:border-primary hover:shadow-sm"
+              >
+                <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <link.icon className="h-5 w-5" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-base font-semibold text-gray-900">{link.title}</h3>
+                  <p className="text-sm text-muted-foreground">{link.description}</p>
+                  <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">{link.cta}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );
